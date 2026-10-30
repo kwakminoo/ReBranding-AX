@@ -1,0 +1,8 @@
+.local/
+.agents/
+.codex/
+__pycache__/
+*.pyc
+*.zip
+.env*
+test-output/
