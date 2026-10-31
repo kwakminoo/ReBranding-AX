@@ -61,6 +61,14 @@ def digest(data):
 
 def setup(root=ROOT, hooks=False):
     data = root / ".local"
+    seed = root / "data" / "seed.zip"
+    restored_seed = False
+    if not (data / "knowledge" / "index.json").exists() and seed.exists():
+        metadata = read_json(root / "data" / "seed.json")
+        if digest(seed.read_bytes()) != metadata["sha256"]:
+            raise ValueError("Bundled seed checksum mismatch; download again")
+        restore(seed, root)
+        restored_seed = True
     for name in ("knowledge", "archive", "clients", "handoffs", "runtime"):
         (data / name).mkdir(parents=True, exist_ok=True)
     if not (data / "config.json").exists():
@@ -85,7 +93,8 @@ def setup(root=ROOT, hooks=False):
             raise ValueError("Existing hooks.json differs; preserved. Merge manually after review.")
         write_json(hook_file, cfg)
     regenerate_persona_skills(root)
-    return {"installed": True, "root": str(root), "hooks": "review_required" if hooks else "not_installed"}
+    return {"installed": True, "root": str(root), "seed_restored": restored_seed,
+        "hooks": "review_required" if hooks else "not_installed"}
 
 
 def scope_for(name):

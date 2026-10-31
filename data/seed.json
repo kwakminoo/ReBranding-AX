@@ -1,0 +1,15 @@
+{
+  "schema": 1,
+  "sha256": "274566f6bcfe88b5e50a1c09f59a81cb27a74bdffa28d5c512431be43440b108",
+  "files": 210,
+  "groups": 4,
+  "documents": 185,
+  "personas": 15,
+  "redactions": {
+    "credential_matches": 2,
+    "machine_paths": 0,
+    "metadata_fields": 166
+  },
+  "published_with_user_authorization": true,
+  "note": "Original source hashes describe the pre-publication originals. Bundle hashes verify the sanitized release."
+}

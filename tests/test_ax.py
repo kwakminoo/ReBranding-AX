@@ -6,9 +6,12 @@ import tempfile
 import unittest
 import uuid
 import zipfile
+import sys
 from datetime import datetime, timezone, timedelta
 
 PROJECT = Path(__file__).resolve().parents[1]
+sys.path.insert(0, str(PROJECT / "scripts"))
+import build_seed
 spec = importlib.util.spec_from_file_location("ax", PROJECT / "scripts" / "ax.py")
 ax = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(ax)
@@ -176,6 +179,38 @@ class WorkflowTests(unittest.TestCase):
         self.assertTrue(public.violations(".local/knowledge/doc.md", b"private"))
         self.assertTrue(public.violations("docs/sample.md", b"ghp_" + b"x" * 30))
         self.assertEqual(public.violations("README.md", b"safe public guide"), [])
+
+    def test_repository_only_bootstrap_and_existing_work_preserved(self):
+        ax.import_source(self.source(), self.root)
+        state = self.prepare_client()
+        build_seed.build(self.root)
+        dest = self.base / "downloaded-repository"
+        shutil.copytree(self.root / "skills", dest / "skills")
+        shutil.copytree(self.root / "data", dest / "data")
+        self.assertTrue(ax.setup(dest)["seed_restored"])
+        self.assertTrue(ax.doctor(dest)["ready"])
+        state["goal"] = "user's later work"
+        ax.write_json(dest / ".local/clients/client-a/state.json", state)
+        self.assertFalse(ax.setup(dest)["seed_restored"])
+        self.assertEqual(ax.read_json(dest / ".local/clients/client-a/state.json")["goal"], "user's later work")
+        raw = (dest / "data/seed.zip").read_bytes()
+        self.assertEqual(public.violations("data/seed.zip", raw), [])
+
+    def test_seed_redaction_and_corrupt_download(self):
+        counts = {"metadata_fields": 0, "credential_matches": 0, "machine_paths": 0}
+        secret = "ghp_" + "z" * 32
+        cleaned = build_seed.clean_json({"account": {"email": "sample@example.test"}, "content": secret, "name": "keep"}, counts)
+        self.assertNotIn("account", cleaned)
+        self.assertEqual(cleaned["content"], "[REDACTED_CREDENTIAL]")
+        self.assertEqual(cleaned["name"], "keep")
+        ax.import_source(self.source(), self.root)
+        build_seed.build(self.root)
+        dest = self.base / "bad-download"
+        shutil.copytree(self.root / "skills", dest / "skills")
+        shutil.copytree(self.root / "data", dest / "data")
+        with (dest / "data/seed.zip").open("ab") as f: f.write(b"corrupt")
+        with self.assertRaises(ValueError): ax.setup(dest)
+        self.assertFalse((dest / ".local/knowledge/index.json").exists())
 
 
 if __name__ == "__main__":

@@ -4,25 +4,24 @@ Windows Codex 앱에서 페르소나·자료·고객별 작업 상태를 필요�
 
 ## 다른 PC에서 시작하기
 
-**공개 코드와 비공개 데이터 묶음이 모두 필요합니다.** 저장소만 내려받으면 도구는 있지만 실제 페르소나·지식·작업 기록은 없습니다. 개인 자료 ZIP을 공개 GitHub, Release, 이슈에 올리지 마세요. 짧게 공개한 뒤 삭제해도 공개된 자료의 복제본을 회수할 수는 없습니다.
+**이 저장소만 내려받으면 됩니다.** 사용자 요청에 따라 `data/seed.zip`에 필요한 초기 페르소나·지식·과거 대화·작업 상태를 포함했습니다. 첫 설치에서 체크섬을 검사하고 자동으로 복원합니다. 별도 데이터 ZIP 전달은 필요 없습니다. 포함된 업무 자료는 공개되어 있으며, 나중에 저장소를 삭제해도 타인이 받은 복제본까지 회수되지는 않습니다.
 
 1. 이 저장소를 clone하거나 Code → Download ZIP으로 내려받아 압축을 풉니다. 예: `D:\Work\ReBranding-AX`.
-2. 별도로 전달받은 `AX-private-*.zip`을 USB/비공개 저장소로 그 PC에 옮깁니다. 이 ZIP은 암호화되지 않았습니다.
-3. Codex 앱을 설치하고 사용할 계정으로 로그인한 뒤, 내려받은 **ReBranding-AX 폴더 자체**를 프로젝트로 엽니다. 부모 폴더가 아닌 이 폴더를 여세요.
-4. Codex에 아래 문구를 입력하거나 PowerShell에서 설치 명령을 실행합니다.
+2. Codex 앱을 설치하고 사용할 계정으로 로그인한 뒤, 내려받은 **ReBranding-AX 폴더 자체**를 프로젝트로 엽니다. 부모 폴더가 아닌 이 폴더를 여세요.
+3. Codex에 아래 문구를 입력하거나 PowerShell에서 설치 명령을 실행합니다.
 
-> 이 저장소 README를 따라 설치해줘. 비공개 데이터 묶음은 D:\Transfer\AX-private-20261031.zip에 있어. 기존 파일은 보존하고 필요한 Python과 프로젝트 스킬을 준비한 뒤 doctor와 테스트를 실행해줘. 훅의 신뢰 확인이 필요한 단계는 안내해줘.
+> 이 저장소 README를 따라 설치해줘. 저장소에 포함된 데이터로 필요한 Python과 스킬을 준비하고 doctor와 테스트를 실행해줘. 기존 작업은 보존하고, 훅의 신뢰 확인이 필요한 단계는 안내해줘.
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup.ps1 -Bundle 'D:\Transfer\AX-private-20261031.zip' -Hooks -InstallPython
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\setup.ps1 -Hooks -InstallPython
 ```
 
 `ExecutionPolicy Bypass`는 이 실행 프로세스에만 적용되며 시스템 정책을 영구 변경하지 않습니다. 조직 정책상 실행이 막히면 정책을 우회하지 말고 승인된 설치 경로를 사용하세요. Python이 있으면 재설치하지 않습니다. 없을 때 `-InstallPython`은 WinGet의 Python 3.14 사용자 설치를 요청합니다. WinGet이 없으면 [Python 공식 Windows 설치 안내](https://docs.python.org/3/using/windows.html)를 따릅니다. 별도 pip/npm 패키지는 필요 없습니다. [Microsoft의 WinGet Python 설치 안내](https://learn.microsoft.com/en-us/windows/python/beginners)
 
-5. 스킬이 목록에 나타나지 않으면 프로젝트/앱을 다시 엽니다. 훅은 Codex가 해당 프로젝트와 훅 정의를 신뢰한 후에만 동작합니다. CLI에서는 이 폴더에서 `codex`를 열고 `/hooks`로 정의를 확인할 수 있습니다. 앱에서 동일한 검토 UI가 제공되지 않으면 CLI에서 검토하거나 훅 없이 사용하세요. 신뢰를 우회하는 옵션은 사용하지 않습니다.
-6. `python scripts/ax.py doctor`에서 `ready: true`, `missing_sources: []`를 확인하고 아래 일상 사용 시험을 합니다. ready는 로컬 파일 준비 상태이며 앱 버튼/훅 신뢰까지 보증하지 않습니다.
+4. 스킬이 목록에 나타나지 않으면 프로젝트/앱을 다시 엽니다. 훅은 Codex가 해당 프로젝트와 훅 정의를 신뢰한 후에만 동작합니다. CLI에서는 이 폴더에서 `codex`를 열고 `/hooks`로 정의를 확인할 수 있습니다. 앱에서 동일한 검토 UI가 제공되지 않으면 CLI에서 검토하거나 훅 없이 사용하세요. 신뢰를 우회하는 옵션은 사용하지 않습니다.
+5. `python scripts/ax.py doctor`에서 `ready: true`, `missing_sources: []`를 확인하고 아래 일상 사용 시험을 합니다. ready는 로컬 파일 준비 상태이며 앱 버튼/훅 신뢰까지 보증하지 않습니다.
 
-원본 Claude export 폴더로 처음 설치할 때는 `-Bundle` 대신 `-Source 'D:\Private\Claude-export'`를 사용합니다. Source에는 `projects/*.json`, 선택적으로 `conversations.json`과 통화 Markdown이 있어야 합니다. 설치/복원은 다른 기존 데이터와 충돌하면 멈춥니다. 먼저 새 폴더에서 복원하세요.
+다른 원본으로 갱신할 때만 `-Source 'D:\Private\Claude-export'`, 개인 백업을 복원할 때만 `-Bundle <ZIP>`을 지정합니다. Source에는 `projects/*.json`, 선택적으로 `conversations.json`과 통화 Markdown이 있어야 합니다. 이미 `.local/knowledge/index.json`이 있으면 기본 seed를 다시 덮어쓰지 않습니다. 명시적 복원도 다른 기존 데이터와 충돌하면 멈춥니다.
 
 ## 일상 사용
 
@@ -40,14 +39,14 @@ Codex는 공통 스킬과 선택된 관점 카드, 현재 고객 상태, 관련 
 
 | 요소 | 구현 |
 | --- | --- |
-| 페르소나 | 원문 섹션을 개별 카드로 분리하고 `.agents/skills/ax-persona-*` 생성. 가져온 원문은 비공개 |
+| 페르소나 | 포함된 15개 원문 카드를 기반으로 `.agents/skills/ax-persona-*` 생성. 필요한 카드만 읽음 |
 | 업무 스킬 | ax-work, ax-continue. 원본은 이 저장소의 skills/에 보관 |
 | 검색 | Python 표준 라이브러리 키워드 검색. 그룹·고객 필터, 출처·줄 번호, 최대 10건의 짧은 발췌 |
 | 상태 | 고객별 brief, state, decisions, sources, outputs |
 | 인계 | 크기 제한·필수 항목 검증·SHA-256 체크포인트·목적지 중복 연결 방지 |
 | 안내 | 턴 시작 시 추정 사용량 확인, 선택형 안내창, 선택 시 채팅 도구 사용 |
 | 선택적 훅 | UserPromptSubmit 경고/모델 맥락, PreCompact 안내. 설치 후 별도 신뢰 검토 필요 |
-| 이전 | 체크섬을 포함한 비공개 ZIP, 다른 파일 충돌 시 복원 거부 |
+| 설치·이전 | 저장소의 seed 자동 복원, 이후 개인 작업은 별도 백업 ZIP으로 이전 가능 |
 
 외부 MCP 서버, QMD, Basic Memory, 벡터 DB, 파인튜닝은 필수 의존성이 아니며 설치하지 않습니다. 이번 기준선은 Markdown 지식 운영과 범위 제한 키워드 검색입니다. 검색 실패 사례가 쌓이면 그 사례로 의미 검색 도입 효과를 먼저 비교하세요.
 
@@ -55,6 +54,7 @@ Codex는 공통 스킬과 선택된 관점 카드, 현재 고객 상태, 관련 
 
 ```text
 AGENTS.md / skills/ / scripts/ / tests/ / docs/   공개 코드·사용법
+data/seed.zip + seed.json                        공개가 승인된 초기 자료와 체크섬
 .agents/skills/                                  설치/생성된 스킬 (Git 제외)
 .codex/hooks.json                                PC별 절대경로 훅 (Git 제외)
 .local/
@@ -92,6 +92,8 @@ checkpoint 전에 Codex가 state의 `next_actions`와 현재 조건을 채워야
 
 ## 공개 저장소 관리
 
-`.local`, `.agents`, `.codex`, ZIP과 원본 연구자료는 공개 커밋에 넣지 않습니다. 공개 파일만 명시적으로 stage한 뒤 `python scripts/check_public.py`로 Git index를 검사하고 실제 diff를 읽으세요. 자동 검사만으로 모든 개인 정보 탐지를 보장하지 않습니다.
+초기 자료의 공개는 사용자가 명시적으로 요청했습니다. `data/seed.zip`만 ZIP 예외로 추적하고 `.local`, `.agents`, `.codex`, 기타 ZIP은 계속 제외합니다. 이후 새 고객 작업을 자동으로 공개하지 않습니다. seed 재생성은 별도 공개 요청이 있을 때만 `python scripts/build_seed.py --confirm-publish-data`로 진행합니다. 인증정보 패턴과 계정 메타데이터를 제외하며, 공개 파일을 명시적으로 stage한 뒤 `python scripts/check_public.py`로 ZIP 내부까지 검사합니다. 자동 검사만으로 모든 민감 정보 탐지를 보장하지 않습니다. 포함 범위는 [data/README.md](data/README.md)를 참고하세요.
 
 다른 PC의 코드·비공개 데이터·작업 결과를 확인하고 별도 백업한 뒤 GitHub 저장소를 삭제해도 로컬 사용은 계속됩니다. 이후 수정은 각 PC의 파일을 직접 옮기거나 다른 비공개 전달 수단이 필요합니다. 저장소 삭제가 PC 간 동기화를 제공하지는 않습니다.
+
+각 병목의 대응은 [docs/BOTTLENECKS.md](docs/BOTTLENECKS.md)에 정리했습니다.

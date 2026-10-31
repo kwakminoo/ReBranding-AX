@@ -5,7 +5,7 @@ description: Anima 브랜딩, Writers 글쓰기, Study 컨셉 학습, Conti 콘�
 
 ## 시작
 
-현재 저장소를 작업 루트로 사용한다. `.local/knowledge/index.json`이 없으면 README의 비공개 데이터 복원 절차를 따른다. 실제 페르소나 정의를 추측하지 않는다.
+현재 저장소를 작업 루트로 사용한다. `.local/knowledge/index.json`이 없으면 `python scripts/ax.py setup`으로 저장소의 초기 데이터와 스킬을 복원한다. 실제 페르소나 정의를 추측하지 않는다.
 
 고객/산출물과 그룹(anima, writers, study, conti)을 확인한다. 이미 대화에서 확정했으면 다시 묻지 않는다. 고객 ID는 영문 소문자·숫자·하이픈이며 표시 이름과 별개다. 새 업무는 `python scripts/ax.py init-client <id> --scope <group> --goal <goal>`로 만든다. 기존 고객 폴더는 덮어쓰지 않는다.
 
